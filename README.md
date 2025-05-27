@@ -20,7 +20,7 @@ Project ini adalah pengembangan game bergenre First-Person Shooter (FPS) menggun
 1. Pastikan kamu sudah menginstal **Unity Hub** dan **Unity versi terbaru** yang kompatibel.
 2. Clone repositori ini:
    ```bash
-   git clone [https://github.com/username/Project-Game-FPS-Unity.git](https://github.com/TimesCoder/Project-Game-FPS-Unity.git)
+   git clone https://github.com/TimesCoder/Project-Game-FPS-Unity.git
 
 ## 🔄 Cara Pull dan Push
 🔽 Melakukan Pull (menarik perubahan dari repo remote) dan Push (mengirim perubahan ke repo remote): 
