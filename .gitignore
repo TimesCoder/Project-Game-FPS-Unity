@@ -1,0 +1,11 @@
+[Ll]ibrary/
+[Tt]emp/
+[Bb]uild/
+[Ll]ogs/
+[Mm]emoryCaptures/
+.obj/
+*.csproj
+*.sln
+*.user
+.vscode/
+UserSettings/
