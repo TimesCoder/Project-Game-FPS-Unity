@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Unity generated files
 [Ll]ibrary/
 [Tt]emp/
@@ -38,3 +39,16 @@ Thumbs.db
 
 # JetBrains
 *.dotCover
+=======
+[Ll]ibrary/
+[Tt]emp/
+[Bb]uild/
+[Ll]ogs/
+[Mm]emoryCaptures/
+.obj/
+*.csproj
+*.sln
+*.user
+.vscode/
+UserSettings/
+>>>>>>> ab73ba0d25b2cf91e1cd1f7d5ec595cc4fc8620d
