@@ -14,6 +14,11 @@ public class PlayerFire : MonoBehaviour
 
     public GameObject HitEffectPrefab;   // Efek hit point (impact)
 
+    // Reload handling
+    public float reloadDuration = 2f;
+    private bool isReloading = false;
+    private float reloadTimer = 0f;
+
     void Start()
     {
         fireLayerIndex = animator.GetLayerIndex("Fire");
@@ -25,13 +30,30 @@ public class PlayerFire : MonoBehaviour
     {
         UpdateMuzzleFlashReference();
 
-        if (Input.GetMouseButton(0))  
+        if (isReloading)
         {
-            if (playerInventory.weapons.Count > 0)
+            reloadTimer -= Time.deltaTime;
+            if (reloadTimer <= 0f)
+            {
+                ReloadComplete();
+            }
+            return; // Tidak bisa menembak saat reload
+        }
+
+        WeaponInstance currentWeapon = playerInventory.GetCurrentWeaponInstance();
+        if (currentWeapon == null) return;
+
+        if (Input.GetMouseButton(0))
+        {
+            if (currentWeapon.currentAmmo > 0)
             {
                 animator.SetBool("Fire", true);
                 animator.SetLayerWeight(fireLayerIndex, 1f);
                 Fire();
+            }
+            else
+            {
+                StartReload();
             }
         }
         else if (Input.GetMouseButtonUp(0))
@@ -41,28 +63,41 @@ public class PlayerFire : MonoBehaviour
             if (muzzleFlash != null && muzzleFlash.isPlaying)
                 muzzleFlash.Stop();
         }
-    }
 
+        // Reload manual dengan tombol R
+        if (Input.GetKeyDown(KeyCode.R) && !isReloading && currentWeapon.currentAmmo < currentWeapon.weaponData.maxAmmo)
+        {
+            StartReload();
+        }
+    }
 
     void UpdateMuzzleFlashReference()
     {
         if (playerInventory.weaponHolder.childCount > 0)
         {
-            var currentWeapon = playerInventory.weaponHolder.GetChild(0).gameObject;
-            if (muzzleFlash == null || muzzleFlash.gameObject != currentWeapon)
+            var currentWeaponGO = playerInventory.weaponHolder.GetChild(0).gameObject;
+            if (muzzleFlash == null || muzzleFlash.gameObject != currentWeaponGO)
             {
-                muzzleFlash = currentWeapon.GetComponentInChildren<ParticleSystem>();
+                muzzleFlash = currentWeaponGO.GetComponentInChildren<ParticleSystem>();
                 if (muzzleFlash != null)
-                    muzzleFlash.Stop(); // Pastikan efek off dulu
+                    muzzleFlash.Stop();
             }
+        }
+        else
+        {
+            muzzleFlash = null;  // reset saat senjata hilang
         }
     }
 
+
     void Fire()
     {
-        if (playerInventory.weapons.Count == 0) return;
+        WeaponInstance currentWeapon = playerInventory.GetCurrentWeaponInstance();
+        if (currentWeapon == null || currentWeapon.currentAmmo <= 0)
+            return;
 
-        // Play efek muzzle flash yang sudah ada di prefab
+        currentWeapon.currentAmmo--;
+
         if (muzzleFlash != null)
             muzzleFlash.Play();
 
@@ -83,7 +118,7 @@ public class PlayerFire : MonoBehaviour
 
             if (hit.collider.CompareTag("Enemy"))
             {
-                int damage = playerInventory.GetCurrentWeaponDamage();
+                int damage = currentWeapon.weaponData.damage;
                 Debug.Log("Dealing " + damage + " damage.");
 
                 EnemyHealth enemyHealth = hit.collider.GetComponent<EnemyHealth>();
@@ -93,11 +128,49 @@ public class PlayerFire : MonoBehaviour
                 }
             }
         }
+
+        // Jika ammo habis setelah tembakan
+        if (currentWeapon.currentAmmo <= 0)
+        {
+            StartReload();
+        }
+    }
+
+    void StartReload()
+    {
+        if (isReloading) return;
+
+        WeaponInstance currentWeapon = playerInventory.GetCurrentWeaponInstance();
+        if (currentWeapon == null || currentWeapon.currentAmmo == currentWeapon.weaponData.maxAmmo)
+            return;
+
+        isReloading = true;
+        reloadTimer = reloadDuration;
+
+        animator.SetBool("Reload", true);
+        animator.SetBool("Fire", false);
+
+        if (muzzleFlash != null && muzzleFlash.isPlaying)
+            muzzleFlash.Stop();
+
+        Debug.Log("Reload started for weapon: " + currentWeapon.weaponData.weaponName);
+    }
+
+    void ReloadComplete()
+    {
+        WeaponInstance currentWeapon = playerInventory.GetCurrentWeaponInstance();
+        if (currentWeapon != null)
+            currentWeapon.currentAmmo = currentWeapon.weaponData.maxAmmo;
+
+        isReloading = false;
+        animator.SetBool("Reload", false);
+
+        Debug.Log("Reload complete for weapon: " + currentWeapon.weaponData.weaponName);
     }
 
     public void UpdateWeaponState()
     {
-        bool hasWeapon = playerInventory.weapons.Count > 0;
+        bool hasWeapon = playerInventory.GetCurrentWeaponInstance() != null;
 
         animator.SetLayerWeight(weaponLayerIndex, hasWeapon ? 1f : 0f);
 
@@ -105,8 +178,11 @@ public class PlayerFire : MonoBehaviour
         {
             animator.SetBool("Fire", false);
             animator.SetLayerWeight(fireLayerIndex, 0f);
+
             if (muzzleFlash != null)
                 muzzleFlash.Stop();
         }
     }
+
+
 }

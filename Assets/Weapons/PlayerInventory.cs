@@ -1,64 +1,112 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+public class WeaponInstance
+{
+    public Weapon weaponData;
+    public int currentAmmo;
+
+    public WeaponInstance(Weapon weapon)
+    {
+        weaponData = weapon;
+        currentAmmo = weapon.maxAmmo;
+    }
+}
+
+
 public class PlayerInventory : MonoBehaviour
 {
-    public List<Weapon> weapons = new List<Weapon>(); // Senjata yang dimiliki
-    public Transform weaponHolder; // Tempat senjata dipegang (buat empty GameObject di tangan player)
-    private GameObject currentWeapon; // Senjata yang sedang aktif
+    public List<Weapon> weaponDataList = new List<Weapon>(); // Data senjata (ScriptableObjects)
+    public List<WeaponInstance> weapons = new List<WeaponInstance>(); // WeaponInstance runtime
+    public Transform weaponHolder; // Tempat senjata di tangan player
+    private GameObject currentWeapon; // GameObject senjata yang sedang aktif
+    private int currentWeaponIndex = 0;
 
-    // Tambah senjata ke inventory
+    // Tambah senjata baru dari Weapon data
     public bool AddWeapon(Weapon newWeapon)
     {
-        // Cek apakah sudah punya senjata ini
-        foreach (Weapon w in weapons)
+        foreach (WeaponInstance w in weapons)
         {
-            if (w.weaponName == newWeapon.weaponName)
-                return false; // Sudah ada, tidak diambil
+            if (w.weaponData.weaponName == newWeapon.weaponName)
+                return false; // Sudah ada
         }
 
-        weapons.Add(newWeapon);
+        weapons.Add(new WeaponInstance(newWeapon));
 
-        // Jika ini senjata pertama, langsung equip
+        // Kalau ini senjata pertama langsung equip
         if (weapons.Count == 1)
             EquipWeapon(0);
 
         return true;
     }
 
-    // Ganti senjata
-    public void EquipWeapon(int index)
+    public void UnequipWeapon()
     {
-        if (currentWeapon != null) Destroy(currentWeapon);
-        if (index >= 0 && index < weapons.Count)
+        if (currentWeapon != null)
         {
-            currentWeapon = Instantiate(weapons[index].weaponPrefab, weaponHolder);
+            Destroy(currentWeapon);
+            currentWeapon = null;
         }
 
-        // Beritahu PlayerFire untuk update state
+        currentWeaponIndex = -1; // Tidak ada senjata aktif
+
+        // Update animasi dan state senjata
         GetComponent<PlayerFire>().UpdateWeaponState();
     }
 
+    public void EquipWeapon(int index)
+    {
+        if (index < 0 || index >= weapons.Count)
+            return;
+
+        currentWeaponIndex = index;
+
+        if (currentWeapon != null)
+            Destroy(currentWeapon);
+
+        currentWeapon = Instantiate(weapons[index].weaponData.weaponPrefab, weaponHolder);
+
+        GetComponent<PlayerFire>().UpdateWeaponState();
+    }
+
+
     void Update()
     {
+        // Tekan 0 untuk sembunyikan semua senjata
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            UnequipWeapon();
+        }
+
         // Ganti senjata dengan tombol 1, 2, 3, dst.
         for (int i = 0; i < weapons.Count; i++)
         {
             if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+            {
                 EquipWeapon(i);
+            }
         }
     }
 
-    public int GetCurrentWeaponDamage()
+
+    public WeaponInstance GetCurrentWeaponInstance()
     {
-        if (weapons.Count == 0) return 0;
+        if (weapons.Count == 0)
+            return null;
 
-        int currentIndex = weapons.FindIndex(w => w.weaponPrefab.name == currentWeapon?.name.Replace("(Clone)", "").Trim());
+        if (currentWeaponIndex < 0 || currentWeaponIndex >= weapons.Count)
+            return null;
 
-        if (currentIndex >= 0 && currentIndex < weapons.Count)
-            return weapons[currentIndex].damage;
-
-        return 0;
+        return weapons[currentWeaponIndex];
     }
 
+
+    public int GetCurrentWeaponDamage()
+    {
+        WeaponInstance weapon = GetCurrentWeaponInstance();
+        if (weapon == null)
+            return 0;
+        return weapon.weaponData.damage;
+    }
 }
