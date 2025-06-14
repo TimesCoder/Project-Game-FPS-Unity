@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class PlayerFire : MonoBehaviour
 {
+    public PlayMakerFSM movementFSM;
     public Transform rayCastFirePoint;
     public float rayDistance = 1000f;
     public Animator animator;
@@ -10,9 +11,9 @@ public class PlayerFire : MonoBehaviour
     private int fireLayerIndex;
     private int weaponLayerIndex;
 
-    private ParticleSystem muzzleFlash;  // Ini diambil dari prefab senjata aktif
+    private ParticleSystem muzzleFlash;
 
-    public GameObject HitEffectPrefab;   // Efek hit point (impact)
+    public GameObject HitEffectPrefab;
 
     // Reload handling
     public float reloadDuration = 2f;
@@ -37,7 +38,7 @@ public class PlayerFire : MonoBehaviour
             {
                 ReloadComplete();
             }
-            return; // Tidak bisa menembak saat reload
+            return;
         }
 
         WeaponInstance currentWeapon = playerInventory.GetCurrentWeaponInstance();
@@ -64,12 +65,12 @@ public class PlayerFire : MonoBehaviour
                 muzzleFlash.Stop();
         }
 
-        // Reload manual dengan tombol R
-        if (Input.GetKeyDown(KeyCode.R) && !isReloading && currentWeapon.currentAmmo < currentWeapon.weaponData.maxAmmo)
+        if (Input.GetKeyDown(KeyCode.R) && !isReloading)
         {
             StartReload();
         }
     }
+
 
     void UpdateMuzzleFlashReference()
     {
@@ -85,7 +86,7 @@ public class PlayerFire : MonoBehaviour
         }
         else
         {
-            muzzleFlash = null;  // reset saat senjata hilang
+            muzzleFlash = null;
         }
     }
 
@@ -172,8 +173,23 @@ public class PlayerFire : MonoBehaviour
     {
         bool hasWeapon = playerInventory.GetCurrentWeaponInstance() != null;
 
+        // Update animasi
         animator.SetLayerWeight(weaponLayerIndex, hasWeapon ? 1f : 0f);
 
+        // Update FSM kalau ada
+        if (movementFSM != null)
+        {
+            var hasWeaponVar = movementFSM.FsmVariables.GetFsmBool("HasWeapon");
+            if (hasWeaponVar != null)
+            {
+                hasWeaponVar.Value = hasWeapon;
+            }
+
+            // Kirim event agar FSM bisa cek ulang dan transisi
+            movementFSM.SendEvent("CheckWeaponAgain");
+        }
+
+        // Bersihkan efek dan layer saat tidak ada senjata
         if (!hasWeapon)
         {
             animator.SetBool("Fire", false);
@@ -183,6 +199,4 @@ public class PlayerFire : MonoBehaviour
                 muzzleFlash.Stop();
         }
     }
-
-
 }
