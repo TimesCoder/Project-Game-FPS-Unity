@@ -4,39 +4,57 @@ using UnityEngine.UI;
 public class ZombieMission : MonoBehaviour
 {
     public int targetKillCount = 20;
-    public float timeLimit = 120f; // 2 menit
+    public float missionDuration = 120f;
     public Text timerText;
     public Text missionStatusText;
-    public Text killCountText; // ✅ Ini dipakai di OnZombieKilled
+    public Text killCountText;
 
-    private float timeRemaining;
+    public AudioSource audioSource;
+    public AudioClip timeUpClip;
+
     private int zombieKilled = 0;
     private bool missionEnded = false;
+    private bool timeUpSoundPlayed = false;
+
+    private float gameStartTime;
 
     void Start()
     {
-        timeRemaining = timeLimit;
+        gameStartTime = Time.time;
         missionStatusText.text = "";
-        killCountText.text = "x 0"; // Awal tampilan kill
+        killCountText.text = "x 0";
     }
 
     void Update()
     {
+        float timeSinceStart = Time.time - gameStartTime;
+
+        // ⏱️ Update timerText selalu, meskipun misi sudah berakhir
+        timerText.text = "Waktu: " + Mathf.FloorToInt(timeSinceStart) + "s";
+
+        // 🚫 Jika misi sudah berakhir, tidak perlu proses logika di bawah
         if (missionEnded) return;
 
-        // Hitung mundur waktu
-        if (timeRemaining > 0)
+        // ⏰ Cek apakah durasi misi habis
+        if (timeSinceStart >= missionDuration)
         {
-            timeRemaining -= Time.deltaTime;
-            timerText.text = "Waktu: " + Mathf.CeilToInt(timeRemaining) + "s";
-        }
-        else
-        {
-            timeRemaining = 0;
+            if (!timeUpSoundPlayed)
+            {
+                timeUpSoundPlayed = true;
+
+                if (audioSource != null && timeUpClip != null)
+                {
+                    audioSource.PlayOneShot(timeUpClip);
+                }
+
+                missionStatusText.text = "Waktu Habis!";
+            }
+
             EndMission(false);
+            return;
         }
 
-        // Cek jika zombie yang dibunuh sudah cukup
+        // ✅ Cek apakah zombie sudah cukup dibunuh
         if (zombieKilled >= targetKillCount)
         {
             EndMission(true);
@@ -48,9 +66,7 @@ public class ZombieMission : MonoBehaviour
         if (missionEnded) return;
 
         zombieKilled++;
-
         killCountText.text = "x " + zombieKilled;
-
         Debug.Log("Zombie dibunuh: " + zombieKilled + "/" + targetKillCount);
     }
 
@@ -62,14 +78,19 @@ public class ZombieMission : MonoBehaviour
         {
             missionStatusText.text = "Misi Berhasil!";
             Debug.Log("Misi selesai. Status: Berhasil");
-
-            // Tandai misi 1 selesai (misi lain belum)
             MissionsComplete.occurrence.GetMissionsDone(true, false, false, false);
         }
         else
         {
             missionStatusText.text = "Misi Gagal!";
             Debug.Log("Misi selesai. Status: Gagal");
+
+            // Mainkan suara jika belum dimainkan
+            if (!timeUpSoundPlayed && audioSource != null && timeUpClip != null)
+            {
+                audioSource.PlayOneShot(timeUpClip);
+                timeUpSoundPlayed = true;
+            }
         }
     }
 }
