@@ -390,7 +390,7 @@ GameObject:
   - component: {fileID: 190646110535253031}
   - component: {fileID: 1322322270380803896}
   - component: {fileID: 8994350650826138554}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1259,7 +1259,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7112132942632929076}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1298,7 +1298,7 @@ GameObject:
   - component: {fileID: 8797973413029395193}
   - component: {fileID: 4097754696794343411}
   - component: {fileID: 2903680649781162152}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1463,9 +1463,9 @@ GameObject:
   - component: {fileID: 8114665202403037704}
   - component: {fileID: 2303298572984227643}
   - component: {fileID: 6831591131781841587}
-  - component: {fileID: 5539616404638021421}
-  - component: {fileID: 4430041467844387704}
+  - component: {fileID: 4224237024815434517}
   - component: {fileID: 1651226621080031602}
+  - component: {fileID: 1619506812176152871}
   m_Layer: 0
   m_Name: BossZombie
   m_TagString: Body
@@ -1558,7 +1558,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &5539616404638021421
+--- !u!114 &4224237024815434517
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1567,40 +1567,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 8687178670234133589}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 442c45faf471aac4e950792e4c1dd962, type: 3}
+  m_Script: {fileID: 11500000, guid: 71a9f5a4b13109d4692d1ba4a43c3b33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 150
-  animator: {fileID: 8114665202403037704}
-  destroyDelay: 5
-  healthBarPivot: {fileID: 7112132942632929076}
-  headshotSound: {fileID: 8300000, guid: b2af6053e6148064bb9ee20882158830, type: 3}
-  bodyshotSound: {fileID: 8300000, guid: be8f3db3843f1a8429ef1e09eb350079, type: 3}
   patrolSpeed: 0.5
   chaseSpeed: 3.5
   detectionRadius: 15
   attackRange: 1
   attackCooldown: 2
-  attackDamage: 25
+  attackDamage: 20
   giveUpChaseDistance: 25
   chaseMemoryTime: 5
   zombieSound: {fileID: 8300000, guid: a87766641db38704faa470d3965f4e7b, type: 3}
   attackSound: {fileID: 8300000, guid: 56260562997aa3945b46941502c4c587, type: 3}
   audioSource: {fileID: 1651226621080031602}
---- !u!114 &4430041467844387704
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8687178670234133589}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ebbccee08097aa4c9926f61dfe01f93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  footStepsSound:
-  - {fileID: 8300000, guid: 6f067872018d27f44820615322317a4f, type: 3}
+  animator: {fileID: 8114665202403037704}
 --- !u!82 &1651226621080031602
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1698,6 +1679,31 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1619506812176152871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8687178670234133589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6e018d537235a54cbc3a74ec3035163, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isPlayer: 0
+  isAiOrDummy: 1
+  health: 100
+  shield: 0
+  healthBarPivot: {fileID: 7112132942632929076}
+  shieldBarPivot: {fileID: 0}
+  animator: {fileID: 8114665202403037704}
+  agent: {fileID: 6831591131781841587}
+  destroyDelay: 5
+  ragdollPrefab: {fileID: 0}
+  youAreDeadUI: {fileID: 0}
+  delayToMainMenu: 0
+  hitEffectImage: {fileID: 0}
 --- !u!1 &8744888774471924515
 GameObject:
   m_ObjectHideFlags: 0

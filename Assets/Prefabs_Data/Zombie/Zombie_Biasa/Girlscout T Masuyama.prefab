@@ -367,7 +367,7 @@ GameObject:
   - component: {fileID: 7790287727147665203}
   - component: {fileID: 1173528837482654692}
   - component: {fileID: 1876328782429671995}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -862,7 +862,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3202309856567428965}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.00000008939232, y: -0.000000028180782, z: 0.00000008940695, w: 1}
+  m_LocalRotation: {x: -0.00000008939232, y: -0.000000028180782, z: 0.00000008940695,
+    w: 1}
   m_LocalPosition: {x: -1.0658141e-16, y: 0.24498709, z: 1.563194e-14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1086,7 +1087,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3695451399758637325}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.000000089406925, y: 0.000000029729293, z: -0.00000008940695, w: 1}
+  m_LocalRotation: {x: -0.000000089406925, y: 0.000000029729293, z: -0.00000008940695,
+    w: 1}
   m_LocalPosition: {x: 2.664535e-16, y: 0.24500197, z: 1.3926637e-14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1376,7 +1378,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4920772813563535477}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.010287565, y: -0.0000000107501315, z: -0.0000059612003, w: 0.9999471}
+  m_LocalRotation: {x: -0.010287565, y: -0.0000000107501315, z: -0.0000059612003,
+    w: 0.9999471}
   m_LocalPosition: {x: 0.00088088674, y: 0.030064378, z: -0.0008103833}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1424,7 +1427,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4298905331579671771}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1721,8 +1724,8 @@ GameObject:
   - component: {fileID: 8340256500917872958}
   - component: {fileID: 9220337369263330477}
   - component: {fileID: 7157061421401418748}
+  - component: {fileID: 8679698901722534884}
   - component: {fileID: 4347165093368993413}
-  - component: {fileID: 3959018968186423471}
   - component: {fileID: 350252466147847779}
   m_Layer: 0
   m_Name: Girlscout T Masuyama
@@ -1816,6 +1819,31 @@ CapsuleCollider:
   m_Height: 1.6
   m_Direction: 1
   m_Center: {x: 0, y: 0.8, z: 0}
+--- !u!114 &8679698901722534884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5955471165480926131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6e018d537235a54cbc3a74ec3035163, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isPlayer: 0
+  isAiOrDummy: 1
+  health: 100
+  shield: 0
+  healthBarPivot: {fileID: 4298905331579671771}
+  shieldBarPivot: {fileID: 0}
+  animator: {fileID: 8340256500917872958}
+  agent: {fileID: 9220337369263330477}
+  destroyDelay: 5
+  ragdollPrefab: {fileID: 0}
+  youAreDeadUI: {fileID: 0}
+  delayToMainMenu: 0
+  hitEffectImage: {fileID: 0}
 --- !u!114 &4347165093368993413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1828,12 +1856,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71a9f5a4b13109d4692d1ba4a43c3b33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  animator: {fileID: 8340256500917872958}
-  destroyDelay: 5
-  healthBarPivot: {fileID: 4298905331579671771}
-  headshotSound: {fileID: 8300000, guid: b2af6053e6148064bb9ee20882158830, type: 3}
-  bodyshotSound: {fileID: 8300000, guid: be8f3db3843f1a8429ef1e09eb350079, type: 3}
   patrolSpeed: 0.5
   chaseSpeed: 3.5
   detectionRadius: 15
@@ -1845,20 +1867,7 @@ MonoBehaviour:
   zombieSound: {fileID: 8300000, guid: a87766641db38704faa470d3965f4e7b, type: 3}
   attackSound: {fileID: 8300000, guid: 56260562997aa3945b46941502c4c587, type: 3}
   audioSource: {fileID: 350252466147847779}
---- !u!114 &3959018968186423471
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5955471165480926131}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ebbccee08097aa4c9926f61dfe01f93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  footStepsSound:
-  - {fileID: 8300000, guid: 6f067872018d27f44820615322317a4f, type: 3}
+  animator: {fileID: 8340256500917872958}
 --- !u!82 &350252466147847779
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2562,7 +2571,7 @@ GameObject:
   - component: {fileID: 8653890963250718767}
   - component: {fileID: 7391597480047806673}
   - component: {fileID: 6238964485666197257}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}

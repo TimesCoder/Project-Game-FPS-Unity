@@ -1,0 +1,160 @@
+﻿using System.Collections;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.AI;
+using UnityEngine.SceneManagement;
+
+public class HealthController : MonoBehaviour
+{
+    [Header("Type")]
+    public bool isPlayer = false;
+    public bool isAiOrDummy = false;
+
+    [Header("HP & Shield")]
+    public float health = 100f;
+    public float shield = 50f;
+
+    private float initialHealth;
+    private float initialShield;
+
+    [Header("UI Pivots")]
+    public Transform healthBarPivot;
+    public Transform shieldBarPivot;
+
+    [Header("Animation & Agent")]
+    public Animator animator;
+    public NavMeshAgent agent;
+    public float destroyDelay = 5f;
+
+    [Header("Ragdoll (Player Only)")]
+    public GameObject ragdollPrefab;
+
+    [Header("UI Death (Player Only)")]
+    public GameObject youAreDeadUI;
+    public float delayToMainMenu = 5f;
+
+    [Header("UI Hit Effect (Player Only)")]
+    public GameObject hitEffectImage; // Tambahkan UI image efek hit (durasi 1 detik)
+
+    private bool isDead = false;
+
+    void Start()
+    {
+        initialHealth = health;
+        initialShield = shield;
+
+        if (animator == null) animator = GetComponent<Animator>();
+        if (agent == null) agent = GetComponent<NavMeshAgent>();
+
+        if (hitEffectImage != null)
+            hitEffectImage.SetActive(false);
+
+        UpdateBars();
+    }
+
+    void UpdateBars()
+    {
+        if (healthBarPivot != null)
+        {
+            float percent = health / initialHealth;
+            healthBarPivot.localScale = new Vector3(percent, 1f, 1f);
+        }
+
+        if (shieldBarPivot != null)
+        {
+            float percent = shield / initialShield;
+            shieldBarPivot.localScale = new Vector3(percent, 1f, 1f);
+        }
+    }
+
+    public void TakeDamage(float damage, string hitPart = "Body")
+    {
+        if (isDead) return;
+
+        if (hitPart == "Head")
+        {
+            health = 0;
+            Die(true);
+            return;
+        }
+
+        if (shield > 0)
+        {
+            float absorbed = Mathf.Min(shield, damage);
+            shield -= absorbed;
+            damage -= absorbed;
+        }
+
+        if (damage > 0)
+            health -= damage;
+
+        health = Mathf.Max(health, 0);
+        shield = Mathf.Max(shield, 0);
+
+        UpdateBars();
+
+        // 🔥 Tampilkan efek hit selama 1 detik
+        if (isPlayer && hitEffectImage != null)
+            StartCoroutine(ShowHitEffect());
+
+        if (health <= 0)
+            Die(false);
+    }
+
+    IEnumerator ShowHitEffect()
+    {
+        hitEffectImage.SetActive(true);
+        yield return new WaitForSeconds(1f); // durasi sesuai animasi
+        hitEffectImage.SetActive(false);
+    }
+
+    void Die(bool headshot)
+    {
+        if (isDead) return;
+        isDead = true;
+
+        if (isAiOrDummy && ZombieMissionManager.Instance != null)
+        {
+            ZombieMissionManager.Instance.RegisterZombieKill();
+        }
+
+
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.enabled = false;
+        }
+
+        foreach (Collider col in GetComponentsInChildren<Collider>())
+            col.enabled = false;
+
+        if (isPlayer)
+        {
+            if (ragdollPrefab != null)
+                Instantiate(ragdollPrefab, transform.position, transform.rotation);
+
+            if (youAreDeadUI != null)
+                youAreDeadUI.SetActive(true);
+
+            StartCoroutine(ReturnToMainMenu());
+        }
+        else
+        {
+            if (animator != null)
+            {
+                animator.SetBool("death_head", headshot);
+                animator.SetBool("death_body", !headshot);
+            }
+
+            Destroy(gameObject, destroyDelay);
+        }
+    }
+
+    IEnumerator ReturnToMainMenu()
+    {
+        yield return new WaitForSeconds(delayToMainMenu);
+        SceneManager.LoadScene("Main Menu"); // Ganti nama jika berbeda
+    }
+
+    public bool IsDead() => isDead;
+}

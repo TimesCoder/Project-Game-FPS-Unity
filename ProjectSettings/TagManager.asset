@@ -2,11 +2,17 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 3
+  serializedVersion: 2
   tags:
-  - Enemy
-  - Head
-  - Body
+  - concrete
+  - grass
+  - gravel
+  - water
+  - metal
+  - vaultObject
+  - Door
+  - hud
+  - hitCollider
   layers:
   - Default
   - TransparentFX
@@ -14,14 +20,14 @@ TagManager:
   - 
   - Water
   - UI
-  - Player
-  - 
-  - Enemy
   - 
   - 
-  - 
-  - 
-  - 
+  - player
+  - bullet
+  - weapon
+  - scopePost
+  - ground
+  - normalPost
   - 
   - 
   - 
@@ -44,5 +50,3 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  m_RenderingLayers:
-  - Default
